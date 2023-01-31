@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 python -m wt_tools.vromfs_unpacker aces.vromfs.bin
 python -m wt_tools.vromfs_unpacker atlases.vromfs.bin
@@ -27,7 +27,7 @@ python -m wt_tools.blk_unpack_ng --format json_3 wwdata.vromfs.bin_u/
 find . -name "*.blk" -delete
 
 
-wine /app/datamine/win/ddsx_unpack.exe ./
+wine64 /app/datamine/win/ddsx_unpack.exe ./
 
 find . -name "*.ddsx" -delete
 

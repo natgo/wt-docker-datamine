@@ -3,7 +3,10 @@ import fs from "fs";
 import WebTorrent from "webtorrent";
 
 const client = new WebTorrent();
-const yupmaster = await axios.get("https://yupmaster.gaijinent.com/yuitem/current_yup.php?project=warthunder&torrent=1&tag=production%2drc",{responseType:"arraybuffer"});
+const yupmaster = await axios.get(
+  "https://yupmaster.gaijinent.com/yuitem/current_yup.php?project=warthunder&torrent=1&tag=production%2drc",
+  { responseType: "arraybuffer" },
+);
 
 client.add(yupmaster.data, { path: "./" }, (torrent) => {
   torrent.deselect(0, torrent.pieces.length - 1, 0);
@@ -28,9 +31,11 @@ client.add(yupmaster.data, { path: "./" }, (torrent) => {
   torrent.on("done", () => {
     console.log("torrent finished downloading");
 
-    if (!fs.existsSync("./out")) {
-      fs.mkdirSync("./out");
+    if (fs.existsSync("./out")) {
+      fs.rmSync("./out",{recursive:true});
     }
+
+    fs.mkdirSync("./out");
 
     const folder = fs.readdirSync(`${fpath}/`);
     const uifolder = fs.readdirSync(`${fpath}/ui/`);
