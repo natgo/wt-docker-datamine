@@ -9,3 +9,9 @@
   <a href="https://forthebadge.com/"><img src="https://forthebadge.com/images/badges/open-source.svg" alt="forthebadge"/></a>
 </p>
 War thunder tools for datamining
+
+## Build
+
+```
+docker build -t wt-datamine .
+```

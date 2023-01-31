@@ -12,6 +12,8 @@ python -m wt_tools.vromfs_unpacker regional.vromfs.bin
 python -m wt_tools.vromfs_unpacker tex.vromfs.bin
 python -m wt_tools.vromfs_unpacker wwdata.vromfs.bin
 
+rm ./*.bin
+
 python -m wt_tools.blk_unpack_ng --format json_3 aces.vromfs.bin_u/
 python -m wt_tools.blk_unpack_ng --format json_3 atlases.vromfs.bin_u/
 python -m wt_tools.blk_unpack_ng --format json_3 char.vromfs.bin_u/
@@ -34,5 +36,3 @@ find . -name "*.ddsx" -delete
 find . -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \;
 
 find . -name "*.dds" -delete
-
-rm *.bin
