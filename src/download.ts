@@ -31,11 +31,9 @@ client.add(yupmaster.data, { path: "./" }, (torrent) => {
   torrent.on("done", () => {
     console.log("torrent finished downloading");
 
-    if (fs.existsSync("./out")) {
-      fs.rmSync("./out",{recursive:true});
+    if (!fs.existsSync("./out")) {
+      fs.mkdirSync("./out");
     }
-
-    fs.mkdirSync("./out");
 
     const folder = fs.readdirSync(`${fpath}/`);
     const uifolder = fs.readdirSync(`${fpath}/ui/`);
