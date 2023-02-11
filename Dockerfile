@@ -16,6 +16,12 @@ RUN addgroup -S abc --gid ${USER_GID} && adduser -S abc -G abc --uid ${USER_UID}
 RUN mkdir -p /data /app/datamine && chown -R abc:abc /data /app
 USER abc
 
+WORKDIR /app
+
+# Istall wt-tools
+ENV PATH="${PATH}:/home/abc/.local/bin"
+RUN git clone https://github.com/kotiq/wt-tools && cd wt-tools/ && pip install . -r requirements.txt
+
 WORKDIR /app/datamine
 
 COPY win ./win
@@ -27,10 +33,6 @@ RUN pnpm install --frozen-lockfile && pnpm build
 WORKDIR /app
 
 COPY unpack.sh start.sh  ./
-
-# Istall wt-tools
-ENV PATH="${PATH}:/home/abc/.local/bin"
-RUN git clone https://github.com/kotiq/wt-tools && cd wt-tools/ && pip install . -r requirements.txt
 
 WORKDIR /data
 VOLUME [ "/data" ]

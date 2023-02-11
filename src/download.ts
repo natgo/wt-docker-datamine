@@ -12,6 +12,9 @@ client.add(yupmaster.data, { path: "./" }, (torrent) => {
   torrent.deselect(0, torrent.pieces.length - 1, 0);
 
   const fpath = torrent.files[0]?.path.split("/")[0];
+  if (!fpath) {
+    throw new Error("No fpath");
+  }
   const regex = new RegExp(`${fpath}/(ui/)?(?!fonts)(?!slides)[a-z]+.vromfs.bin`, "gi");
 
   torrent.files.forEach((file) => {
@@ -50,6 +53,7 @@ client.add(yupmaster.data, { path: "./" }, (torrent) => {
 
     client.destroy(() => {
       console.log("destroyed");
+      fs.rmSync(fpath, { recursive: true });
     });
   });
 });

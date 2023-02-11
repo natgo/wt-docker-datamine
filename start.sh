@@ -1,5 +1,6 @@
 #!/bin/sh
+set -e
 
 node /app/datamine/dist/download.js
 cd ./out
-/app/unpack.sh
+time /app/unpack.sh
