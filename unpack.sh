@@ -35,9 +35,7 @@ find . -name "*.blk" -delete
 
 
 wine64 /app/datamine/win/ddsx_unpack.exe ./
-
 find . -name "*.ddsx" -delete
 
 find . -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \;
-
 find . -name "*.dds" -delete
