@@ -3,8 +3,25 @@ import fs from "fs";
 import WebTorrent from "webtorrent";
 
 const client = new WebTorrent();
+
+// Do not datamine live branch tag="" outPath="live"
+let tag = "&tag=production%2drc";
+let outPath = process.argv[2];
+
+switch (outPath) {
+  case "live":
+    outPath = "rc";
+    break;
+  case "dev":
+    tag = "&tag=dev";
+    break;
+  case "rc":
+    tag = "&tag=production%2drc";
+    break;
+}
+
 const yupmaster = await axios.get(
-  "https://yupmaster.gaijinent.com/yuitem/current_yup.php?project=warthunder&torrent=1&tag=production%2drc",
+  `https://yupmaster.gaijinent.com/yuitem/current_yup.php?project=warthunder&torrent=1${tag}`,
   { responseType: "arraybuffer" },
 );
 
@@ -34,25 +51,25 @@ client.add(yupmaster.data, { path: "./" }, (torrent) => {
   torrent.on("done", () => {
     console.log("torrent finished downloading");
 
-    if (!fs.existsSync("./out")) {
-      fs.mkdirSync("./out");
+    if (!fs.existsSync(`./out/${outPath}`)) {
+      fs.mkdirSync(`./out/${outPath}`);
     }
 
     const folder = fs.readdirSync(`${fpath}/`);
     const uifolder = fs.readdirSync(`${fpath}/ui/`);
     folder.forEach((element) => {
       if (element.endsWith("vromfs.bin")) {
-        fs.copyFileSync(`./${fpath}/${element}`, `./out/${element}`);
+        fs.copyFileSync(`./${fpath}/${element}`, `./out/${outPath}/${element}`);
       }
     });
     uifolder.forEach((element) => {
       if (element.endsWith("vromfs.bin")) {
-        fs.copyFileSync(`./${fpath}/ui/${element}`, `./out/${element}`);
+        fs.copyFileSync(`./${fpath}/ui/${element}`, `./out/${outPath}/${element}`);
       }
     });
 
     client.destroy(() => {
-      console.log("destroyed");
+      console.log("destroyed", process.argv[2]);
       fs.rmSync(fpath, { recursive: true });
     });
   });

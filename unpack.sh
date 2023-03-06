@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-rm -r ./*.bin_u/
+rm -r ./*.bin_u/ || true
 
 python -m wt_tools.vromfs_unpacker aces.vromfs.bin &
 python -m wt_tools.vromfs_unpacker atlases.vromfs.bin &
