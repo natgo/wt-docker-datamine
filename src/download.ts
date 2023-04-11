@@ -10,6 +10,7 @@ let outPath = process.argv[2];
 
 switch (outPath) {
   case "live":
+    tag = "&tag=production%2drc";
     outPath = "rc";
     break;
   case "dev":
