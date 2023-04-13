@@ -31,7 +31,10 @@ func getFileVersion(file string, serverVersion string) string {
 		fmt.Println("version file not found", stat)
 		os.WriteFile(file, []byte(serverVersion), 0660)
 	}
-	fileVersion, _ := os.ReadFile(file)
+	fileVersion, err := os.ReadFile(file)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	return string(fileVersion)
 }
@@ -96,6 +99,7 @@ func main() {
 	const rc_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=production%2drc"
 	const dev_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=dev"
 	const live_file, rc_file, dev_file = "version-live.txt", "version-rc.txt", "version-dev.txt"
+	fmt.Println(os.Getenv("PWD"))
 
 	var LiveServerVersion, RCServerVersion, DevServerVersion = getServerVersion(live_url), getServerVersion(rc_url), getServerVersion(dev_url)
 	var LiveFileVersion, RCFileVersion, DevFileVersion = getFileVersion(live_file, LiveServerVersion), getFileVersion(rc_file, RCServerVersion), getFileVersion(dev_file, DevServerVersion)
