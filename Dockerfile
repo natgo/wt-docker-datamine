@@ -42,7 +42,7 @@ ARG USER_GID=1000
 ENV PATH="${PATH}:/home/abc/.local/bin"
 
 RUN addgroup -S abc --gid ${USER_GID} && adduser -S abc -G abc --uid ${USER_UID}
-RUN mkdir -p /data /app/datamine && chown -R abc:abc /data /app
+RUN mkdir -p /data /app/datamine /home/abc && chown -R abc:abc /data /app /home/abc
 USER abc
 
 WORKDIR /app/datamine
@@ -63,5 +63,7 @@ COPY unpack.sh start.sh entrypoint.sh ./
 
 WORKDIR /data
 VOLUME [ "/data" ]
+
+USER root
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]

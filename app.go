@@ -63,6 +63,13 @@ func updateType(fileVersion string, serverVersion string) string {
 
 func parse(serverVersion string, fileVersion string, update string, file string, server string) {
 	if serverVersion != fileVersion {
+		cmd, err := exec.Command("/app/start.sh", strings.ToLower(server)).Output()
+		if err != nil {
+			fmt.Printf("error %s", err)
+		}
+		output := string(cmd)
+		fmt.Println(output)
+
 		var template string
 		if update == "Major" {
 			template = fmt.Sprintf("New %s update: %s on %s\n@here", update, serverVersion, server)
@@ -81,17 +88,9 @@ func parse(serverVersion string, fileVersion string, update string, file string,
 			fmt.Println(posterr)
 		}
 
-		cmd, err := exec.Command("/app/start.sh", strings.ToLower(server)).Output()
-		if err != nil {
-			fmt.Printf("error %s", err)
-		}
-		output := string(cmd)
-		fmt.Println(output)
-
 		fmt.Printf("%s version: %s -> %s\n", server, fileVersion, serverVersion)
+		os.WriteFile(file, []byte(serverVersion), 0660)
 	}
-
-	os.WriteFile(file, []byte(serverVersion), 0660)
 }
 
 func main() {
@@ -99,7 +98,6 @@ func main() {
 	const rc_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=production%2drc"
 	const dev_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=dev"
 	const live_file, rc_file, dev_file = "version-live.txt", "version-rc.txt", "version-dev.txt"
-	fmt.Println(os.Getenv("PWD"))
 
 	var LiveServerVersion, RCServerVersion, DevServerVersion = getServerVersion(live_url), getServerVersion(rc_url), getServerVersion(dev_url)
 	var LiveFileVersion, RCFileVersion, DevFileVersion = getFileVersion(live_file, LiveServerVersion), getFileVersion(rc_file, RCServerVersion), getFileVersion(dev_file, DevServerVersion)

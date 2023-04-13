@@ -37,5 +37,10 @@ find . -name "*.blk" -delete
 wine64 /app/datamine/win/ddsx_unpack.exe ./
 find . -name "*.ddsx" -delete
 
-find . -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \;
+find tex.vromfs.bin_u/ -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \; &
+find images.vromfs.bin_u/ -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \; &
+find atlases.vromfs.bin_u/ -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \; &
+
+wait
+
 find . -name "*.dds" -delete
