@@ -42,12 +42,13 @@ ARG USER_GID=1000
 ENV PATH="${PATH}:/home/abc/.local/bin"
 
 RUN addgroup -S abc --gid ${USER_GID} && adduser -S abc -G abc --uid ${USER_UID}
-RUN mkdir -p /data /app/datamine /home/abc && chown -R abc:abc /data /app /home/abc
+RUN mkdir -p /data /win /app/datamine /home/abc && chown -R abc:abc /data /win /app /home/abc
 USER abc
+
+COPY win /win/
 
 WORKDIR /app/datamine
 
-COPY win ./win
 COPY src ./src
 COPY dist ./dist
 COPY package.json pnpm-lock.yaml tsconfig.json ./
@@ -63,6 +64,7 @@ COPY unpack.sh start.sh entrypoint.sh ./
 
 WORKDIR /data
 VOLUME [ "/data" ]
+VOLUME [ "/win/oo2core_6_win64.dll" ]
 
 USER root
 

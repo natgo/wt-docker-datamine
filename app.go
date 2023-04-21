@@ -27,13 +27,17 @@ func getServerVersion(url string) string {
 
 func getFileVersion(file string, serverVersion string) string {
 	stat, err := os.Stat(file)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	if os.IsNotExist(err) {
 		fmt.Println("version file not found", stat)
 		os.WriteFile(file, []byte(serverVersion), 0660)
 	}
-	fileVersion, err := os.ReadFile(file)
-	if err != nil {
-		fmt.Println(err)
+	fileVersion, readErr := os.ReadFile(file)
+	if readErr != nil {
+		fmt.Println(readErr)
 	}
 
 	return string(fileVersion)

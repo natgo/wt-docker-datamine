@@ -4,15 +4,10 @@ import WebTorrent from "webtorrent";
 
 const client = new WebTorrent();
 
-// Do not datamine live branch tag="" outPath="live"
-let tag = "&tag=production%2drc";
+let tag = "";
 let outPath = process.argv[2];
 
 switch (outPath) {
-  case "live":
-    tag = "&tag=production%2drc";
-    outPath = "rc";
-    break;
   case "dev":
     tag = "&tag=dev";
     break;

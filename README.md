@@ -12,6 +12,24 @@ War thunder tools for datamining
 
 ## Build
 
-```
+```bash
 docker build -t wt-datamine .
+```
+
+## Usage
+
+Docker Compose:
+```yaml
+---
+version: "2.1"
+services:
+  wt-datamine:
+    image: wt-datamine
+    container_name: wt-datamine
+    environment:
+      - WEBHOOK=<Your Discord Webhook>
+    volumes:
+      - /path/to/datamine:/data
+      - /path/to/oodle/oo2core_6_win64.dll:/win/oo2core_6_win64.dll:ro
+    restart: unless-stopped
 ```
