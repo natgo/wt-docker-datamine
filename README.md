@@ -17,8 +17,8 @@ docker build -t wt-datamine .
 ```
 
 ## Usage
-
-Docker Compose:
+1. Obtain `oo2core_6_win64.dll`
+2. Docker Compose:
 ```yaml
 ---
 version: "2.1"
