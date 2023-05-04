@@ -13,7 +13,7 @@ USER abc
 
 WORKDIR /app
 
-RUN git clone https://github.com/kotiq/wt-tools && cd wt-tools/ && pip install . -r requirements.txt
+RUN git clone https://github.com/kotiq/wt-tools && cd wt-tools/ && git checkout d89c358a3f45a725f1b190a2c1183f7288a5f80e && pip install . -r requirements.txt
 
 COPY go.mod app.go ./
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' -v -o ./app /app
