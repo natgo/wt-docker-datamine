@@ -67,6 +67,19 @@ func updateType(fileVersion string, serverVersion string) string {
 
 func parse(serverVersion string, fileVersion string, update string, file string, server string) {
 	if serverVersion != fileVersion {
+		webhook := os.Getenv("WEBHOOK")
+
+		template1 := fmt.Sprintf("Starting datamine for update: %s on %s", serverVersion, server)
+		reqBody1, _ := json.Marshal(map[string]string{
+			"content": template1,
+		})
+
+		_, posterr1 := http.Post(webhook, "application/json", bytes.NewBuffer(reqBody1))
+
+		if posterr1 != nil {
+			fmt.Println(posterr1)
+		}
+
 		cmd, err := exec.Command("/app/start.sh", strings.ToLower(server)).Output()
 		if err != nil {
 			fmt.Printf("error %s", err)
@@ -83,8 +96,6 @@ func parse(serverVersion string, fileVersion string, update string, file string,
 		reqBody, _ := json.Marshal(map[string]string{
 			"content": template,
 		})
-
-		webhook := os.Getenv("WEBHOOK")
 
 		_, posterr := http.Post(webhook, "application/json", bytes.NewBuffer(reqBody))
 

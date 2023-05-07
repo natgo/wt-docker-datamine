@@ -34,7 +34,7 @@ wait
 find . -name "*.blk" -delete
 
 
-wine64 /app/datamine/win/ddsx_unpack.exe ./
+wine64 /win/ddsx_unpack.exe ./
 find . -name "*.ddsx" -delete
 
 find tex.vromfs.bin_u/ -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \; &
