@@ -65,7 +65,7 @@ client.add(yupmaster.data, { path: "./" }, (torrent) => {
     });
 
     client.destroy(() => {
-      console.log("destroyed", process.argv[2]);
+      console.log("destroyed", outPath);
       fs.rmSync(fpath, { recursive: true });
     });
   });
