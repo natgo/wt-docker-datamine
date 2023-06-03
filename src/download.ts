@@ -5,7 +5,7 @@ import WebTorrent from "webtorrent";
 const client = new WebTorrent();
 
 let tag = "";
-let outPath = process.argv[2];
+const outPath = process.argv[2];
 
 switch (outPath) {
   case "dev":

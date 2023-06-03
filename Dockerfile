@@ -18,7 +18,7 @@ RUN git clone https://github.com/kotiq/wt-tools && cd wt-tools/ && git checkout 
 COPY go.mod app.go ./
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' -v -o ./app /app
 
-FROM alpine:3.17
+FROM alpine:3.18
 
 RUN apk add --no-cache imagemagick wine nodejs python3 busybox-openrc
 
