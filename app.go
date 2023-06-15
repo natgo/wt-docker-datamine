@@ -11,6 +11,10 @@ import (
 	"strings"
 )
 
+const live_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder"
+const rc_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=production%2drc"
+const dev_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=dev"
+
 func getServerVersion(url string) string {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -109,9 +113,6 @@ func parse(serverVersion string, fileVersion string, update string, file string,
 }
 
 func main() {
-	const live_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder"
-	const rc_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=production%2drc"
-	const dev_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=dev"
 	const live_file, rc_file, dev_file = "version-live.txt", "version-rc.txt", "version-dev.txt"
 
 	var LiveServerVersion, RCServerVersion, DevServerVersion = getServerVersion(live_url), getServerVersion(rc_url), getServerVersion(dev_url)
