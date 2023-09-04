@@ -1,4 +1,4 @@
-FROM golang:alpine as builder
+FROM golang:alpine as go-builder
 
 # Install dependencies
 RUN apk add --no-cache gcc musl-dev git python3-dev py3-pip py3-wheel 
@@ -13,10 +13,20 @@ USER abc
 
 WORKDIR /app
 
-RUN git clone https://github.com/kotiq/wt-tools && cd wt-tools/ && git checkout d89c358a3f45a725f1b190a2c1183f7288a5f80e && pip install . -r requirements.txt
+RUN git clone https://github.com/kotiq/wt-tools.git && cd wt-tools/ && git checkout d89c358a3f45a725f1b190a2c1183f7288a5f80e && pip install . -r requirements.txt
 
 COPY go.mod app.go ./
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' -v -o ./app /app
+
+FROM rust:alpine as rust-builder
+
+# Install dependencies
+RUN apk add --no-cache gcc musl-dev git
+
+RUN git clone https://github.com/Warthunder-Open-Source-Foundation/wt_ext_cli.git && cd  wt_ext_cli/ && git checkout nv0.0.12
+
+WORKDIR /wt_ext_cli
+RUN cargo build --release
 
 FROM alpine:3.18
 
@@ -34,7 +44,7 @@ RUN touch /etc/environment && chmod 0666 /etc/environment
 
 RUN apk add --no-cache npm && npm install -g pnpm && apk del npm
 
-COPY --from=builder /home/abc/.local /home/abc/.local
+COPY --from=go-builder /home/abc/.local /home/abc/.local
 
 # Run as user
 ARG USER_UID=1000
@@ -58,7 +68,9 @@ RUN pnpm install --frozen-lockfile
 
 WORKDIR /app
 
-COPY --from=builder /app/app ./
+COPY --from=go-builder /app/app ./
+
+COPY --from=rust-builder /wt_ext_cli/target/release/wt_ext_cli ./
 
 COPY unpack.sh start.sh entrypoint.sh ./
 

@@ -3,43 +3,29 @@ set -e
 
 rm -r ./*.bin_u/ || true
 
-python -m wt_tools.vromfs_unpacker aces.vromfs.bin &
-python -m wt_tools.vromfs_unpacker atlases.vromfs.bin &
-python -m wt_tools.vromfs_unpacker char.vromfs.bin &
-python -m wt_tools.vromfs_unpacker game.vromfs.bin &
-python -m wt_tools.vromfs_unpacker gui.vromfs.bin &
-python -m wt_tools.vromfs_unpacker images.vromfs.bin &
-python -m wt_tools.vromfs_unpacker lang.vromfs.bin &
-python -m wt_tools.vromfs_unpacker mis.vromfs.bin &
-python -m wt_tools.vromfs_unpacker tex.vromfs.bin &
-python -m wt_tools.vromfs_unpacker wwdata.vromfs.bin &
+/app/wt_ext_cli unpack_vromf --input_dir_or_file aces.vromfs.bin &
+/app/wt_ext_cli unpack_vromf --input_dir_or_file atlases.vromfs.bin &
+/app/wt_ext_cli unpack_vromf --input_dir_or_file char.vromfs.bin &
+/app/wt_ext_cli unpack_vromf --input_dir_or_file game.vromfs.bin &
+/app/wt_ext_cli unpack_vromf --input_dir_or_file gui.vromfs.bin &
+/app/wt_ext_cli unpack_vromf --input_dir_or_file images.vromfs.bin &
+/app/wt_ext_cli unpack_vromf --input_dir_or_file lang.vromfs.bin &
+/app/wt_ext_cli unpack_vromf --input_dir_or_file mis.vromfs.bin &
+/app/wt_ext_cli unpack_vromf --input_dir_or_file tex.vromfs.bin &
+/app/wt_ext_cli unpack_vromf --input_dir_or_file wwdata.vromfs.bin &
 
 wait
+
+find ./ -type f -name "*.blk" -exec sh -c 'mv "$1" "${1%.blk}.blkx"' _ {} \;
 
 rm ./*.vromfs.bin
-
-python -m wt_tools.blk_unpack_ng --format json_3 aces.vromfs.bin_u/ &
-python -m wt_tools.blk_unpack_ng --format json_3 atlases.vromfs.bin_u/ &
-python -m wt_tools.blk_unpack_ng --format json_3 char.vromfs.bin_u/ &
-python -m wt_tools.blk_unpack_ng --format json_3 game.vromfs.bin_u/ &
-python -m wt_tools.blk_unpack_ng --format json_3 gui.vromfs.bin_u/ &
-python -m wt_tools.blk_unpack_ng --format json_3 images.vromfs.bin_u/ &
-python -m wt_tools.blk_unpack_ng --format json_3 lang.vromfs.bin_u/ &
-python -m wt_tools.blk_unpack_ng --format json_3 mis.vromfs.bin_u/ &
-python -m wt_tools.blk_unpack_ng --format json_3 tex.vromfs.bin_u/ &
-python -m wt_tools.blk_unpack_ng --format json_3 wwdata.vromfs.bin_u/ &
-
-wait
-
-find . -name "*.blk" -delete
-
 
 wine64 /win/ddsx_unpack.exe ./
 find . -name "*.ddsx" -delete
 
-find tex.vromfs.bin_u/ -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \; &
-find images.vromfs.bin_u/ -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \; &
-find atlases.vromfs.bin_u/ -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \; &
+find tex.vromfs.bin_u/ -type f -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \; &
+find images.vromfs.bin_u/ -type f -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \; &
+find atlases.vromfs.bin_u/ -type f -name "*.dds" -exec mogrify -format png -define png:exclude-chunk=date,time "{}" \; &
 
 wait
 
