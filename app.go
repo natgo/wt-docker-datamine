@@ -15,6 +15,20 @@ const live_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=wa
 const rc_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=production%2drc"
 const dev_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=dev"
 
+func postToWebhook(templatedString string) {
+	webhook := os.Getenv("WEBHOOK")
+
+	reqBody, _ := json.Marshal(map[string]string{
+		"content": templatedString,
+	})
+
+	_, err := http.Post(webhook, "application/json", bytes.NewBuffer(reqBody))
+
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func getServerVersion(url string) string {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -56,35 +70,22 @@ func updateType(fileVersion string, serverVersion string) string {
 	newMinorVer := strings.Split(serverVersion, ".")[2]
 	newPatchVer := strings.Split(serverVersion, ".")[3]
 
-	var updateType string
-
 	if newMinorVer != oldMinorVer || newMajorVer != oldMajorVer {
-		updateType = "Major"
+		return "Major"
 	}
 
 	if newPatchVer != oldPatchVer {
-		updateType = "Patch"
+		return "Patch"
 	}
 
-	return updateType
+	return "None"
 }
 
-func parse(serverVersion string, fileVersion string, update string, file string, server string) {
+func parse(serverVersion string, fileVersion string, update string, file string, serverType string) {
 	if serverVersion != fileVersion {
-		webhook := os.Getenv("WEBHOOK")
+		postToWebhook(fmt.Sprintf("Starting datamine for update: %s on %s", serverVersion, serverType))
 
-		template1 := fmt.Sprintf("Starting datamine for update: %s on %s", serverVersion, server)
-		reqBody1, _ := json.Marshal(map[string]string{
-			"content": template1,
-		})
-
-		_, posterr1 := http.Post(webhook, "application/json", bytes.NewBuffer(reqBody1))
-
-		if posterr1 != nil {
-			fmt.Println(posterr1)
-		}
-
-		cmd, err := exec.Command("/app/start.sh", strings.ToLower(server)).Output()
+		cmd, err := exec.Command("/app/start.sh", strings.ToLower(serverType)).Output()
 		if err != nil {
 			fmt.Printf("error %s", err)
 		}
@@ -93,21 +94,14 @@ func parse(serverVersion string, fileVersion string, update string, file string,
 
 		var template string
 		if update == "Major" {
-			template = fmt.Sprintf("New %s update: %s on %s\n@here", update, serverVersion, server)
+			template = fmt.Sprintf("New %s update: %s on %s\n@here", update, serverVersion, serverType)
 		} else {
-			template = fmt.Sprintf("New %s update: %s on %s", update, serverVersion, server)
-		}
-		reqBody, _ := json.Marshal(map[string]string{
-			"content": template,
-		})
-
-		_, posterr := http.Post(webhook, "application/json", bytes.NewBuffer(reqBody))
-
-		if posterr != nil {
-			fmt.Println(posterr)
+			template = fmt.Sprintf("New %s update: %s on %s", update, serverVersion, serverType)
 		}
 
-		fmt.Printf("%s version: %s -> %s\n", server, fileVersion, serverVersion)
+		postToWebhook(template)
+
+		fmt.Printf("%s version: %s -> %s\n", serverType, fileVersion, serverVersion)
 		os.WriteFile(file, []byte(serverVersion), 0660)
 	}
 }

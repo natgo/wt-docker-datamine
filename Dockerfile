@@ -23,7 +23,7 @@ FROM rust:alpine as rust-builder
 # Install dependencies
 RUN apk add --no-cache gcc musl-dev git
 
-RUN git clone https://github.com/Warthunder-Open-Source-Foundation/wt_ext_cli.git && cd  wt_ext_cli/ && git checkout nv0.0.12
+RUN git clone https://github.com/Warthunder-Open-Source-Foundation/wt_ext_cli.git && cd  wt_ext_cli/ && git checkout v0.3.0
 
 WORKDIR /wt_ext_cli
 RUN cargo build --release
