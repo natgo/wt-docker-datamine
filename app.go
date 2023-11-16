@@ -15,6 +15,27 @@ const live_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=wa
 const rc_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=production%2drc"
 const dev_url = "https://yupmaster.gaijinent.com/yuitem/get_version.php?proj=warthunder&tag=dev"
 
+func getLock() bool {
+	_, err := os.Stat("datamine.lock")
+	if os.IsNotExist(err) {
+		os.Create("datamine.lock")
+		return false
+	}
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return true
+}
+
+func deleteLock() {
+	err := os.Remove("datamine.lock")
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func postToWebhook(templatedString string) {
 	webhook := os.Getenv("WEBHOOK")
 
@@ -113,7 +134,13 @@ func main() {
 	var LiveFileVersion, RCFileVersion, DevFileVersion = getFileVersion(live_file, LiveServerVersion), getFileVersion(rc_file, RCServerVersion), getFileVersion(dev_file, DevServerVersion)
 	var LiveUpdate, RCUpdate, DevUpdate = updateType(LiveFileVersion, LiveServerVersion), updateType(RCFileVersion, RCServerVersion), updateType(DevFileVersion, DevServerVersion)
 
-	parse(LiveServerVersion, LiveFileVersion, LiveUpdate, live_file, "Live")
-	parse(RCServerVersion, RCFileVersion, RCUpdate, rc_file, "RC")
-	parse(DevServerVersion, DevFileVersion, DevUpdate, dev_file, "Dev")
+	if !getLock() {
+		parse(LiveServerVersion, LiveFileVersion, LiveUpdate, live_file, "Live")
+		parse(RCServerVersion, RCFileVersion, RCUpdate, rc_file, "RC")
+		parse(DevServerVersion, DevFileVersion, DevUpdate, dev_file, "Dev")
+		deleteLock()
+	} else {
+		fmt.Println("lock file found, not starting datamine")
+	}
+
 }
