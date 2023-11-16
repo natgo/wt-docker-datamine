@@ -10,17 +10,17 @@
     "pretty": "prettier -w src/"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "4.2.1",
-    "@types/node": "20.8.9",
-    "@types/webtorrent": "0.109.5",
-    "@typescript-eslint/eslint-plugin": "6.9.1",
-    "@typescript-eslint/parser": "6.9.1",
-    "eslint": "8.52.0",
-    "prettier": "3.0.3",
+    "@trivago/prettier-plugin-sort-imports": "4.3.0",
+    "@types/node": "20.9.1",
+    "@types/webtorrent": "0.109.6",
+    "@typescript-eslint/eslint-plugin": "6.11.0",
+    "@typescript-eslint/parser": "6.11.0",
+    "eslint": "8.53.0",
+    "prettier": "3.1.0",
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "axios": "1.6.0",
+    "axios": "1.6.2",
     "webtorrent": "2.0.18"
   }
 }
