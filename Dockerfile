@@ -13,7 +13,7 @@ USER abc
 
 WORKDIR /app
 
-RUN git clone https://github.com/kotiq/wt-tools.git && cd wt-tools/ && git checkout d89c358a3f45a725f1b190a2c1183f7288a5f80e && pip install . -r requirements.txt
+RUN git clone https://github.com/kotiq/wt-tools.git && cd wt-tools/ && git checkout d89c358a3f45a725f1b190a2c1183f7288a5f80e && pip install . -r requirements.txt --break-system-packages
 
 COPY go.mod app.go ./
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' -v -o ./app /app
@@ -23,12 +23,12 @@ FROM rust:alpine as rust-builder
 # Install dependencies
 RUN apk add --no-cache gcc musl-dev git
 
-RUN git clone https://github.com/Warthunder-Open-Source-Foundation/wt_ext_cli.git && cd  wt_ext_cli/ && git checkout v0.4.1
+RUN git clone https://github.com/Warthunder-Open-Source-Foundation/wt_ext_cli.git && cd  wt_ext_cli/ && git checkout v0.4.5
 
 WORKDIR /wt_ext_cli
 RUN cargo build --release
 
-FROM alpine:3.18
+FROM alpine:3.19
 
 RUN apk add --no-cache imagemagick wine nodejs python3 busybox-openrc
 
