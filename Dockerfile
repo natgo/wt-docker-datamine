@@ -29,7 +29,7 @@ RUN apk --no-cache add gcc musl-dev git
 # Clone and build Rust application
 RUN git clone https://github.com/Warthunder-Open-Source-Foundation/wt_ext_cli.git && \
   cd wt_ext_cli/ && \
-  git checkout v0.4.5 && \
+  git checkout v0.5.1 && \
   cargo build --release
 
 # Stage 3: Create final image

@@ -2,7 +2,7 @@ import axios from "axios";
 import fs from "fs";
 import WebTorrent from "webtorrent";
 
-const client = new WebTorrent();
+const client = new WebTorrent({ utp: false });
 
 let tag = "";
 const outPath = process.argv[2];
