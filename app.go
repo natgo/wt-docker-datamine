@@ -106,6 +106,35 @@ func parse(serverVersion string, fileVersion string, update string, file string,
 	if serverVersion != fileVersion {
 		postToWebhook(fmt.Sprintf("Starting datamine for update: %s on %s", serverVersion, serverType))
 
+		// Download the .torrent file
+		var tag string
+		switch strings.ToLower(serverType) {
+		case "dev":
+			tag = "&tag=dev"
+		case "rc":
+			tag = "&tag=production%2drc"
+		}
+
+		torrentResp, err := http.Get(fmt.Sprintf("https://yupmaster.gaijinent.com/yuitem/current_yup.php?project=warthunder&torrent=1%s", tag))
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		torrentDir, err := downloadTorrent(torrentResp.Body)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		outPath := fmt.Sprintf("./out/%s", strings.ToLower(serverType))
+		uiPath := fmt.Sprintf("%s/ui", *torrentDir)
+		copyFiles(*torrentDir, outPath)
+		copyFiles(uiPath, outPath)
+
+		err = os.RemoveAll(*torrentDir)
+		if err != nil {
+			fmt.Println(err)
+		}
+
 		cmd, err := exec.Command("/app/start.sh", strings.ToLower(serverType)).Output()
 		if err != nil {
 			fmt.Printf("error %s", err)

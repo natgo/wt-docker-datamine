@@ -17,7 +17,7 @@ WORKDIR /app
 
 RUN git clone https://github.com/kotiq/wt-tools.git && cd wt-tools/ && git checkout d89c358a3f45a725f1b190a2c1183f7288a5f80e && pip install . -r requirements.txt --break-system-packages
 
-COPY go.mod app.go ./
+COPY go.mod go.sum *.go ./
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w' -v -o ./app /app
 
 # Stage 2: Build Rust application
@@ -35,7 +35,7 @@ RUN git clone https://github.com/Warthunder-Open-Source-Foundation/wt_ext_cli.gi
 # Stage 3: Create final image
 FROM alpine:3.19
 
-RUN apk add --no-cache imagemagick wine nodejs python3 busybox-openrc
+RUN apk add --no-cache imagemagick wine python3 busybox-openrc
 
 # Copy go-cron file to the cron.d directory
 COPY go-cron /etc/cron.d/go-cron
@@ -45,8 +45,6 @@ RUN chmod 0644 /etc/cron.d/go-cron \
   && crontab /etc/cron.d/go-cron \
   # Create the log file to be able to run tail
   && touch /var/log/cron.log && touch /etc/environment && chmod 0666 /etc/environment
-
-RUN apk add --no-cache npm && npm install -g pnpm && apk del npm
 
 COPY --from=go-builder /home/abc/.local /home/abc/.local
 
@@ -60,16 +58,6 @@ RUN mkdir -p /data /win /app/datamine /home/abc && chown -R abc:abc /data /win /
 USER abc
 
 COPY win /win/
-
-WORKDIR /app/datamine
-
-# Copy Node.js application files
-COPY src ./src
-COPY dist ./dist
-COPY package.json pnpm-lock.yaml tsconfig.json ./
-
-ARG NODE_ENV=production
-RUN pnpm install --frozen-lockfile
 
 # Switch to the application directory
 WORKDIR /app
